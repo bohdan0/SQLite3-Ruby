@@ -24,16 +24,17 @@ class ModelBase
       options = options.keys.map do |key|
         "#{key} = '#{options[key]}'"
       end
+
       options = options.join(" AND ")
     end
 
     QuestionsDB.instance.execute(<<-SQL)
     SELECT
-    *
+      *
     FROM
-    #{self::TABLE}
+      #{self::TABLE}
     WHERE
-    #{options}
+      #{options}
     SQL
   end
 
@@ -71,25 +72,29 @@ class ModelBase
 
   def create
     raise "#{self} already in database" if @id
+
     keys = create_hash.keys.join(", ")
     values = create_hash.values
     num = create_hash.length
     question_marks = "#{'?, '  * (num - 1)}?"
+
     QuestionsDB.instance.execute(<<-SQL, *values)
     INSERT INTO
       #{self.class::TABLE} (#{keys})
     VALUES
-     (#{question_marks})
-        SQL
+      (#{question_marks})
+    SQL
+
     @id = QuestionsDB.instance.last_insert_row_id
   end
 
   def update
     raise "#{self} doesn't exist" unless @id
+
     variables = create_hash
     keys = variables.keys.join(" = ?, ") + " = ?"
     values = variables.values
-    num = variables.length
+
     QuestionsDB.instance.execute(<<-SQL, *values, @id)
     UPDATE
       #{self.class::TABLE}
@@ -104,14 +109,14 @@ class ModelBase
     @id ? update : create
   end
 
-def create_hash
-  variables = {}
-  self.instance_variables.each do |var|
-    next if var == :@id
-    new_var = var.to_s.delete("@").to_s
-    variables[new_var] = self.send(new_var)
+  def create_hash
+    variables = {}
+    self.instance_variables.each do |var|
+      next if var == :@id
+      new_var = var.to_s.delete("@").to_s
+      variables[new_var] = self.send(new_var)
+    end
+    variables
   end
-  variables
-end
 
 end

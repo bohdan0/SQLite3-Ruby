@@ -23,8 +23,6 @@ class Follow < ModelBase
   SQL
   end
 
-
-
   def self.followers_for_question_id(question_id)
     QuestionsDB.instance.execute(<<-SQL, question_id)
     SELECT
@@ -56,18 +54,6 @@ class Follow < ModelBase
     @question_id = options['question_id']
   end
 
-  # def create
-  #   raise "question doesn\'t exist" unless @question_id
-  #   raise "user doesn\'t exist" unless @user_id
-  #
-  #   QuestionsDB.instance.execute(<<-SQL, @user_id, @question_id)
-  #   INSERT INTO
-  #     question_follows (user_id, question_id)
-  #   VALUES
-  #     (?, ?)
-  #   SQL
-  # end
-
   def delete
     raise "question doesn\'t exist" unless @question_id
     raise "user doesn\'t exist" unless @user_id
@@ -79,6 +65,4 @@ class Follow < ModelBase
       question_id = ? AND user_id = ?
     SQL
   end
-
-
 end

@@ -16,24 +16,18 @@ end
 class Question < ModelBase
   attr_accessor :title, :body, :user_id
 
-TABLE = 'questions'
+  TABLE = 'questions'
 
   def self.find_by_author_id(author_id)
     QuestionsDB.instance.execute(<<-SQL, author_id)
-      SELECT
-        *
-      FROM
-        questions
-      WHERE
-        user_id = ?
-      SQL
+    SELECT
+      *
+    FROM
+      questions
+    WHERE
+      user_id = ?
+    SQL
   end
-
-
-  # def self.all
-  #   data = QuestionsDB.instance.execute("SELECT * FROM questions")
-  #   data.map { |datum| Question.new(datum) }
-  # end
 
   def self.most_followed(n)
     Follow.most_followed_questions(n)
@@ -49,29 +43,6 @@ TABLE = 'questions'
     @body = options['body']
     @user_id = options['user_id']
   end
-
-  # def create
-  #   raise "#{self} already in database" if @id
-  #   QuestionsDB.instance.execute(<<-SQL, @title, @body, @user_id)
-  #   INSERT INTO
-  #     questions (title, body, user_id)
-  #   VALUES
-  #     (?, ?, ?)
-  #   SQL
-  #   @id  = QuestionsDB.instance.last_insert_row_id
-  # end
-  #
-  # def update
-  #   raise "#{self} doesn't exist" unless @id
-  #   QuestionsDB.instance.execute(<<-SQL, @title, @body, @user_id, @id)
-  #   UPDATE
-  #     questions
-  #   SET
-  #     title = ?, body = ?, user_id = ?
-  #   WHERE
-  #     id = ?
-  #   SQL
-  # end
 
   def author
     QuestionsDB.instance.execute(<<-SQL, @user_id)

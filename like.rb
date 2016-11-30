@@ -3,9 +3,7 @@ require_relative 'modelbase.rb'
 class Like < ModelBase
   attr_accessor :user_id, :question_id
 
-TABLE = 'question_likes'
-
-
+  TABLE = 'question_likes'
 
   def self.likers_for_question_id(question_id)
     QuestionsDB.instance.execute(<<-SQL, question_id)
@@ -82,6 +80,7 @@ TABLE = 'question_likes'
   def unlike
     raise "question doesn\'t exist" unless @question_id
     raise "user doesn\'t exist" unless @user_id
+
     QuestionsDB.instance.execute(<<-SQL, @question_id, @user_id)
     DELETE FROM
       question_likes
